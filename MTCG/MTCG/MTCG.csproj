@@ -8,10 +8,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MTCG</RootNamespace>
     <AssemblyName>MTCG</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,6 +58,10 @@
     <ProjectReference Include="..\Model\Model.csproj">
       <Project>{914f63f2-9d45-47af-9352-ad61f01a2c44}</Project>
       <Name>Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServerHTTP\ServerHTTP.csproj">
+      <Project>{6100b04b-e6ed-454b-b78f-ba617b585db1}</Project>
+      <Name>ServerHTTP</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

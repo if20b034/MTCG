@@ -27,6 +27,7 @@ namespace Model
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return false;
             }
         }

@@ -22,12 +22,12 @@ namespace Model
         public int ELO { get; set; }
 
         public List<ICard> Collection { get; set; }
-        public ICard[] Deck { get; set; }
+        public List<ICard> Deck { get; set; }
 
         public User()
         {
             Collection = new();
-            Deck = new ICard[5];
+            Deck = new();
             Coins = StartingMoney;
             ELO = StartingElo; //TODO: Remove from contrs
         }
@@ -39,20 +39,19 @@ namespace Model
             Coins = Coins - 5;
             return true;
         }
-
+        //TODO: add only if in Collection (Remove from colleciton) etc..
         public bool addCardToDeck(ICard card)
         {
             try
             {
-                if (Deck.Length == 5)
+                if (Deck.Count>=5)
                     return false;
-                List<ICard> cards = new List<ICard>(Deck);
-                cards.Add(card);
-                Deck = cards.ToArray();
+                Deck.Add(card);
                 return true;
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return false; 
             }
         }
@@ -61,15 +60,14 @@ namespace Model
         {
             try
             {
-                if (Deck.Length == 0)
+                if (Deck.Count == 0)
                     return false;
-                List<ICard> cards = new List<ICard>(Deck);
-                cards.Remove(card);
-                Deck = cards.ToArray();
+                Deck.Remove(card);
                 return true;
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return false; 
             }
         }

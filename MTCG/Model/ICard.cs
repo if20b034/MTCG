@@ -8,8 +8,9 @@ namespace Model
 {
     public interface ICard
     {
+        int id { get; set; }
         string Name { get; set; }
         int Damage { get; set; }
-        ElementType ElementType { get; set; }
+        string ElementType { get; set; }
     }
 }

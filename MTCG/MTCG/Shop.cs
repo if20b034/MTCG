@@ -25,6 +25,7 @@ namespace MTCG
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return false;
             }
         }
@@ -42,6 +43,7 @@ namespace MTCG
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return false; 
             }
         }
