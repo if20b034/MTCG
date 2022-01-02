@@ -53,11 +53,17 @@
     <Compile Include="MonsterType.cs" />
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Request.cs" />
+    <Compile Include="RequestModels\RegisterRequest.cs" />
+    <Compile Include="Response.cs" />
+    <Compile Include="ResponseModels\ApiErrorResponse.cs" />
+    <Compile Include="ResponseModels\AuthenticateResponse.cs" />
     <Compile Include="Spell.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

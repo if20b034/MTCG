@@ -54,35 +54,35 @@ namespace MTCG
 
                     if (p1Card.GetType() == typeof(Spell) && p2Card.GetType() == typeof(Monster))
                     {
-                        Monster monsterCard1 = (Monster)p1Card;
+                        Monster monsterCard2 = (Monster)p2Card;
                        
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = monsterCard1.MonsterType,
-                            Dimension2 = p2Card.ElementType
+                            Dimension1 = monsterCard2.MonsterType,
+                            Dimension2 = p1Card.ElementType
                         }, out output))
                             multiplication1 *= output;
-                        if (BattleLogic.TryGetValue(new Key()
-                        {
-                            Dimension1 = p2Card.ElementType,
-                            Dimension2 = monsterCard1.MonsterType
-                        }, out output))
-                            multiplication2 *= output;
-                    }
-                    else if (p1Card.GetType() == typeof(Monster) && p2Card.GetType() == typeof(Spell)){
-
-                        Monster monsterCard2 = (Monster)p2Card;
-
                         if (BattleLogic.TryGetValue(new Key()
                         {
                             Dimension1 = p1Card.ElementType,
                             Dimension2 = monsterCard2.MonsterType
                         }, out output))
+                            multiplication2 *= output;
+                    }
+                    else if (p1Card.GetType() == typeof(Monster) && p2Card.GetType() == typeof(Spell)){
+
+                        Monster monsterCard1 = (Monster)p1Card;
+
+                        if (BattleLogic.TryGetValue(new Key()
+                        {
+                            Dimension1 = p2Card.ElementType,
+                            Dimension2 = monsterCard1.MonsterType
+                        }, out output))
                             multiplication1 *= output;
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = monsterCard2.MonsterType,
-                            Dimension2 = p1Card.ElementType
+                            Dimension1 = monsterCard1.MonsterType,
+                            Dimension2 = p2Card.ElementType
                         }, out output))
                             multiplication2 *= output;
                     }

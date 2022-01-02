@@ -12,10 +12,11 @@ namespace Model
 
         private const int StartingElo = 100;
         //TODO: Credentials
-        private string Email { get; set; }
-        private string Pass { get; set;  }
+        public string Username { get; set; }
+        public string Password { get; set;  }
 
-        private Guid Session { get; set; }
+        private Guid _session;
+        public Guid Session { get { return _session; } set { _session = Guid.NewGuid(); } }
 
         private int Coins { get; set; }
 
