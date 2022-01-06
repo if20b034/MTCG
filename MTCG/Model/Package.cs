@@ -8,14 +8,15 @@ namespace Model
 {
     public class Package
     {
-        public ICard[] Cards { get; set; }
+        public ICard[] Cards { get;  private set; }
+        public Guid id { get; set; }
 
         public Package()
         {
             Cards = new ICard[5];
         }
 
-        public bool addCards(List<ICard>cards)
+        public bool addCards(List<ICard> cards)
         {
             try
             {

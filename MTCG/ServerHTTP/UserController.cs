@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Database;
 using Model;
 using Model.RequestModels;
 using Model.ResponseModels;
@@ -13,16 +14,16 @@ namespace ServerHTTP
 {
     public class UserController
     {
-        public static List<User> users = new();
-        public static Action<string, TcpClient> RegisterUser = Register; 
+        public static Action<string, TcpClient> RegisterUser = Register;
+        private static DBConnector dBConnector = DBConnector.GetInstance();
 
         private static void Register(string data, TcpClient client)
         {
             RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
             User user = new() { Username = userRequest.Username, Password = userRequest.Password };
-            user.Session = new Guid();
-            Console.WriteLine("Test");
-            users.Add(user);
+            user.Session = Guid.NewGuid();
+            user.id= Guid.NewGuid();
+            dBConnector.insertUser(user);
             AuthenticateResponse authenticateResponse = new() { Authorization = user.Session};
             Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
             response.Post(client.GetStream());

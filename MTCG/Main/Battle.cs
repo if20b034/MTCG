@@ -39,14 +39,14 @@ namespace MTCG
                 {
                     if (BattleLogic.TryGetValue(new Key()
                     {
-                        Dimension1 = p1Card.ElementType,
-                        Dimension2 = p2Card.ElementType
+                        Dimension1 = p1Card.ElementType.ToLower(),
+                        Dimension2 = p2Card.ElementType.ToLower()
                     }, out var output))
                         multiplication1 *= output;
                     if (BattleLogic.TryGetValue(new Key()
                     {
-                        Dimension1 = p2Card.ElementType,
-                        Dimension2 = p1Card.ElementType
+                        Dimension1 = p2Card.ElementType.ToLower(),
+                        Dimension2 = p1Card.ElementType.ToLower()
                     }, out output))
                         multiplication2 *= output;
 
@@ -58,14 +58,14 @@ namespace MTCG
                        
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = monsterCard2.MonsterType,
-                            Dimension2 = p1Card.ElementType
+                            Dimension1 = monsterCard2.MonsterType.ToLower(),
+                            Dimension2 = p1Card.ElementType.ToLower()
                         }, out output))
                             multiplication1 *= output;
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = p1Card.ElementType,
-                            Dimension2 = monsterCard2.MonsterType
+                            Dimension1 = p1Card.ElementType.ToLower(),
+                            Dimension2 = monsterCard2.MonsterType.ToLower()
                         }, out output))
                             multiplication2 *= output;
                     }
@@ -75,14 +75,14 @@ namespace MTCG
 
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = p2Card.ElementType,
-                            Dimension2 = monsterCard1.MonsterType
+                            Dimension1 = p2Card.ElementType.ToLower(),
+                            Dimension2 = monsterCard1.MonsterType.ToLower()
                         }, out output))
                             multiplication1 *= output;
                         if (BattleLogic.TryGetValue(new Key()
                         {
-                            Dimension1 = monsterCard1.MonsterType,
-                            Dimension2 = p2Card.ElementType
+                            Dimension1 = monsterCard1.MonsterType.ToLower(),
+                            Dimension2 = p2Card.ElementType.ToLower()
                         }, out output))
                             multiplication2 *= output;
                     }
@@ -92,9 +92,9 @@ namespace MTCG
                     Monster monsterCard1 = (Monster) p1Card;
                     Monster monsterCard2 = (Monster)p2Card;
 
-                    if(BattleLogic.TryGetValue(new Key() { Dimension1 = monsterCard1.MonsterType, Dimension2 = monsterCard2.MonsterType }, out var i1))
+                    if(BattleLogic.TryGetValue(new Key() { Dimension1 = monsterCard1.MonsterType.ToLower(), Dimension2 = monsterCard2.MonsterType.ToLower() }, out var i1))
                         multiplication1 *= i1;
-                    if(BattleLogic.TryGetValue(new Key() { Dimension1 = monsterCard2.MonsterType, Dimension2 = monsterCard1.MonsterType }, out var i2))
+                    if(BattleLogic.TryGetValue(new Key() { Dimension1 = monsterCard2.MonsterType.ToLower(), Dimension2 = monsterCard1.MonsterType.ToLower() }, out var i2))
                         multiplication2 *= i2;
                 }
 
@@ -126,31 +126,31 @@ namespace MTCG
         private void FillLogic()
         {
             //ElementType
-            BattleLogic[new Key() { Dimension1 = "Fire", Dimension2 = "Grass" }] = timestwo;
-            BattleLogic[new Key() { Dimension1 = "Grass", Dimension2 = "Fire" }] = half;
+            BattleLogic[new Key() { Dimension1 = "fire", Dimension2 = "grass" }] = timestwo;
+            BattleLogic[new Key() { Dimension1 = "grass", Dimension2 = "fire" }] = half;
 
-            BattleLogic[new Key() { Dimension1 = "Water", Dimension2 = "Fire" }] = timestwo;
-            BattleLogic[new Key() { Dimension1 = "Fire", Dimension2 = "Water" }] = half;
+            BattleLogic[new Key() { Dimension1 = "water", Dimension2 = "fire" }] = timestwo;
+            BattleLogic[new Key() { Dimension1 = "fire", Dimension2 = "water" }] = half;
 
-            BattleLogic[new Key() { Dimension1 = "Grass", Dimension2 = "Water" }] = timestwo;
-            BattleLogic[new Key() { Dimension1 = "Water", Dimension2 = "Grass" }] = half;
+            BattleLogic[new Key() { Dimension1 = "grass", Dimension2 = "water" }] = timestwo;
+            BattleLogic[new Key() { Dimension1 = "water", Dimension2 = "grass" }] = half;
 
             //MonsterType
-            BattleLogic[new Key() { Dimension1 = "Goblin", Dimension2 = "Dragon" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "goblin", Dimension2 = "dragon" }] = zero;
 
-            BattleLogic[new Key() { Dimension1 = "Ork", Dimension2 = "Wizard" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "ork", Dimension2 = "wizard" }] = zero;
 
-            BattleLogic[new Key() { Dimension1 = "Dragon", Dimension2 = "Elf" }] = zero;
-            BattleLogic[new Key() { Dimension1 = "Elf", Dimension2 = "Dragon" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "dragon", Dimension2 = "elf" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "elf", Dimension2 = "dragon" }] = zero;
 
             //ElementType and MonsterType
-            BattleLogic[new Key() { Dimension1 = "Knight", Dimension2 = "Water" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "knight", Dimension2 = "water" }] = zero;
 
-            BattleLogic[new Key() { Dimension1 = "Fire", Dimension2 = "Kraken" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "fire", Dimension2 = "kraken" }] = zero;
 
-            BattleLogic[new Key() { Dimension1 = "Water", Dimension2 = "Kraken" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "water", Dimension2 = "kraken" }] = zero;
 
-            BattleLogic[new Key() { Dimension1 = "Grass", Dimension2 = "Kraken" }] = zero;
+            BattleLogic[new Key() { Dimension1 = "grass", Dimension2 = "kraken" }] = zero;
             }
 
         public bool addType(Key key ,double value)
@@ -161,6 +161,7 @@ namespace MTCG
                 return true; 
             }catch(Exception e)
             {
+                Console.WriteLine(e);
                 return false;
             }           
         }

@@ -13,6 +13,6 @@ namespace Model
         public string Name { get; set; }
         public int Damage { get; set; }
         public string ElementType { get; set; }
-        public int id { get; set; }
+        public Guid id { get; set; }
     }
 }

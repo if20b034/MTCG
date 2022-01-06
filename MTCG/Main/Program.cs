@@ -1,4 +1,6 @@
 ﻿using System;
+using Database;
+using Model;
 using ServerHTTP;
 
 namespace Main
@@ -10,6 +12,7 @@ namespace Main
             Console.WriteLine("Hello World!");
 
             Server server = Server.GetServer();
+            DBConnector dBConnector = DBConnector.GetInstance();
             Handler.fillHandler();
 
             writeScreen();
@@ -37,10 +40,18 @@ namespace Main
 
                     case "3":
                     case "connect":
+                        dBConnector.CreateDB();
+                        dBConnector.CreateTable();
                         break;
 
                     case "4":
                     case "disconnect":
+                        //User user = new User() { Username = "Tamara", Password = "1111" };
+                        //dBConnector.insertUser(user);
+                        //dBConnector.getAllUsers();
+                        ////dBConnector.getUser("Nuri");
+                        //user.Username = "Aramat";
+                        //dBConnector.UpdateUser(user);
                         break;
 
                     case "5":

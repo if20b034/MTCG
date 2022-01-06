@@ -8,6 +8,7 @@ namespace Model
 {
     public class User
     {
+        public Guid id { get; set; }
         private const int StartingMoney = 20;
 
         private const int StartingElo = 100;
@@ -15,12 +16,13 @@ namespace Model
         public string Username { get; set; }
         public string Password { get; set;  }
 
-        private Guid _session;
-        public Guid Session { get { return _session; } set { _session = Guid.NewGuid(); } }
+        public Guid Session { get; set; }
 
-        private int Coins { get; set; }
+        public int Coins { get; set; }
 
         public int ELO { get; set; }
+
+        public string saltkey { get; set; }
 
         public List<ICard> Collection { get; set; }
         public List<ICard> Deck { get; set; }

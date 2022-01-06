@@ -21,8 +21,8 @@ namespace MTCG.Test
             
             Shop shop = new();
             Package package = new();
-            Monster monster = new Monster() {id=1, Damage=20, ElementType= "Water", MonsterType="Dragon", Name="WaterDragon"};
-            Spell spell = new() { Damage = 20, ElementType = "Grass", id = 1, Name = "GrassSpell" };
+            Monster monster = new Monster() {id= new System.Guid(), Damage=20, ElementType= "Water", MonsterType="Dragon", Name="WaterDragon"};
+            Spell spell = new() { Damage = 20, ElementType = "Grass", id = new System.Guid(), Name = "GrassSpell" };
 
             List<ICard> list = new();
             list.Add(monster);
