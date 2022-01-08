@@ -14,6 +14,7 @@ namespace ServerHTTP
         public static void chooseController(Request request, TcpClient ns)
         {
             //TODO: try 
+            //TODO: Check for auth
             string[] tokens = request.URL.Split('/');
             if (tokens.Length == 2)
             {
@@ -22,19 +23,43 @@ namespace ServerHTTP
                     Dimension1 = tokens[1],
                     Dimension2 = request.Type
                 }, out var output))
-                    output(request.Data, ns);
+                    output(request.Data, ns, request.Authorization);
             }
             else
-                if (tokens[1] == "users" || tokens[1] == "tradings")
-                    map[new Key() { Dimension1 = tokens[1], Dimension2 = request.Type }](request.Data, ns, tokens[2]);
+                if (tokens[1] == "transactions"|| tokens[1] == "battles")
+                    if (map.TryGetValue(new Key() { Dimension1 = tokens[1] + "/" + tokens[2], Dimension2 = request.Type }, out var output))
+                        output(request.Data, ns, request.Authorization); //Eigentlich redundant weil es gibt nur einen transactions route ... egal dont care
+                    else
+                    { } //TODO Syntax shit
                 else
-                    map[new Key() { Dimension1 = tokens[1] + "/" + tokens[2], Dimension2 = request.Type }](request.Data, ns);
+                    if (map.TryGetValue(new Key() { Dimension1 = tokens[1]+"/", Dimension2 = request.Type }, out var output))
+                        output(request.Data, ns, request.Authorization, tokens[2]);
+            //TODO: IDIOT MACH DAS FERTIG!
+            //TODO: Kein Bock alter so viele Sicherrungen ? Glaubst du wirklich dass das überhaupt mehr als 2 Personen an Traffic haben wird? 
+            //TODO: Send Not found? 
         }
 
         public static void fillHandler()
         {
             map.Add(new Key() { Dimension1 = "users", Dimension2 = "POST" },UserController.RegisterUser);
             map.Add(new Key() { Dimension1 = "sessions", Dimension2 = "POST" },SessionsController.Session);
+            map.Add(new Key() { Dimension1 = "packages", Dimension2 = "POST" }, PackagesController.CreatePackage);
+            map.Add(new Key() { Dimension1 = "transactions/packages", Dimension2 = "POST" }, TransactionsController.BuyPackage);
+            map.Add(new Key() { Dimension1 = "cards", Dimension2 = "GET" }, CardsController.GetAllCards);
+            map.Add(new Key() { Dimension1 = "deck", Dimension2 = "GET" }, DeckController.GetDeck);
+            map.Add(new Key() { Dimension1 = "deck", Dimension2 = "PUT" }, DeckController.ConfigureDeck);
+            map.Add(new Key() { Dimension1 = "users/", Dimension2 = "GET" }, UserController.GetUser);
+            map.Add(new Key() { Dimension1 = "users/", Dimension2 = "PUT" }, UserController.SetUser);
+            map.Add(new Key() { Dimension1 = "stats", Dimension2 = "GET" }, StatsController.GetUser);
+            map.Add(new Key() { Dimension1 = "score", Dimension2 = "GET" }, ScoreController.GetScore);
+
+            map.Add(new Key() { Dimension1 = "tradings", Dimension2 = "GET" }, ScoreController.GetScore);
+            map.Add(new Key() { Dimension1 = "tradings/", Dimension2 = "DELETE" }, ScoreController.GetScore);
+            map.Add(new Key() { Dimension1 = "tradings", Dimension2 = "POST" }, ScoreController.GetScore);
+            map.Add(new Key() { Dimension1 = "tradings/", Dimension2 = "POST" }, ScoreController.GetScore);
+
+            map.Add(new Key() { Dimension1 = "battles", Dimension2 = "POST" }, BatlleController.BattleStart);
+            map.Add(new Key() { Dimension1 = "battles/Add", Dimension2 = "POST" }, BatlleController.AddBattle);
             //TODO REST
         }
     }

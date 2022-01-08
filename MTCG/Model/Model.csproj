@@ -52,10 +52,17 @@
     <Compile Include="Package.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request.cs" />
+    <Compile Include="RequestModels\BattleAddRequest.cs" />
+    <Compile Include="RequestModels\PackageRequest.cs" />
     <Compile Include="RequestModels\RegisterRequest.cs" />
+    <Compile Include="RequestModels\TradeRequest.cs" />
     <Compile Include="Response.cs" />
     <Compile Include="ResponseModels\ApiErrorResponse.cs" />
     <Compile Include="ResponseModels\AuthenticateResponse.cs" />
+    <Compile Include="ResponseModels\CardsResponse.cs" />
+    <Compile Include="ResponseModels\DeckResponse.cs" />
+    <Compile Include="ResponseModels\PackageResponse.cs" />
+    <Compile Include="ResponseModels\ScoreResponse.cs" />
     <Compile Include="Spell.cs" />
     <Compile Include="Trade.cs" />
     <Compile Include="TradingCard.cs" />

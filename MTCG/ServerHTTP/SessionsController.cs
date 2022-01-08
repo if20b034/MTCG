@@ -14,10 +14,10 @@ namespace ServerHTTP
 {
     public class SessionsController
     {
-        public static Action<string, TcpClient> Session = GetSession;
+        public static Action<string, TcpClient,string> Session = GetSession;
         private static DBConnector dBConnector = DBConnector.GetInstance();
 
-        private static void GetSession(string data, TcpClient client)
+        private static void GetSession(string data, TcpClient client, string Auth)
         {
             RegisterRequest user = JsonConvert.DeserializeObject<RegisterRequest>(data);
             //TODO Salt

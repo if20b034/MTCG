@@ -14,10 +14,12 @@ namespace ServerHTTP
 {
     public class UserController
     {
-        public static Action<string, TcpClient> RegisterUser = Register;
+        public static Action<string, TcpClient, string> RegisterUser = Register;
+        public static Action<string, TcpClient, string, string> GetUser = Get;
+        public static Action<string, TcpClient, string, string> SetUser = Set;
         private static DBConnector dBConnector = DBConnector.GetInstance();
 
-        private static void Register(string data, TcpClient client)
+        private static void Register(string data, TcpClient client, string auth)
         {
             RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
             User user = new() { Username = userRequest.Username, Password = userRequest.Password };
@@ -27,6 +29,84 @@ namespace ServerHTTP
             AuthenticateResponse authenticateResponse = new() { Authorization = user.Session};
             Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
             response.Post(client.GetStream());
+            //TODO: DUmmy check
+        }
+
+        private static void Get(string data, TcpClient client, string auth, string userid)
+        {
+            if (auth != "")
+            {
+                User userSession = dBConnector.getUserBySession(auth);
+                if (userSession is not null)
+                {
+                    User userId = dBConnector.getUserByID(userid);
+                    if (userId is not null)
+                    {
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userSession)));
+                        response.Post(client.GetStream());
+
+                    }
+                    else
+                    {
+                        ApiErrorResponse apiErrorResponse = new() { Message = "You are not Authorized! " };
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                        response.Post(client.GetStream());
+                    }
+                }
+                else
+                {
+                    ApiErrorResponse apiErrorResponse = new() { Message = "User Not Found!" };
+                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                    response.Post(client.GetStream());
+                }
+            }
+            else
+            {
+                ApiErrorResponse apiErrorResponse = new() { Message = "Not logged in!" };
+                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                response.Post(client.GetStream());
+            }
+        }
+
+        private static void Set(string data, TcpClient client, string auth, string userid)
+        {
+            if (auth != "")
+            {
+                User userSession = dBConnector.getUserBySession(auth);
+                if (userSession is not null)
+                {
+                    User userId = dBConnector.getUserByID(userid);
+                    if (userId is not null)
+                    {
+
+                        RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
+                        userSession.Username = userRequest.Username;
+                        userSession.Password = userRequest.Password; //TODO: Salt (Wie im Register und Login) 
+                        dBConnector.UpdateUser(userSession);
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userSession)));
+                        response.Post(client.GetStream());
+
+                    }
+                    else
+                    {
+                        ApiErrorResponse apiErrorResponse = new() { Message = "You are not Authorized! " };
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                        response.Post(client.GetStream());
+                    }
+                }
+                else
+                {
+                    ApiErrorResponse apiErrorResponse = new() { Message = "User Not Found!" };
+                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                    response.Post(client.GetStream());
+                }
+            }
+            else
+            {
+                ApiErrorResponse apiErrorResponse = new() { Message = "Not logged in!" };
+                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                response.Post(client.GetStream());
+            }
         }
     }
 }

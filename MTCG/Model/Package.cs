@@ -8,7 +8,7 @@ namespace Model
 {
     public class Package
     {
-        public ICard[] Cards { get;  private set; }
+        public ICard[] Cards { get;  set; }
         public Guid id { get; set; }
 
         public Package()

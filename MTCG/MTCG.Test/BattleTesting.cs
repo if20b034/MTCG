@@ -15,7 +15,7 @@ namespace MTCG.Test
         [Test]
         public void BattleTest1()
         {
-            Battle BL = new();
+            Battle BL = Battle.GetInstance();
             User u1 = new();
             User u2 = new();
             
@@ -56,7 +56,7 @@ namespace MTCG.Test
             u2.addCardToDeck(spell);
             u2.addCardToDeck(spell);
 
-            Assert.That(BL.Fight(u2, u1));
+            Assert.That(BL.Fight(u2, u1).winner);
         }
     }
 }
