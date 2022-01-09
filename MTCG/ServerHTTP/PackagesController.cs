@@ -20,37 +20,54 @@ namespace ServerHTTP
 
         private static void Create(string data, TcpClient client, string auth)
         {
-            //if (auth == SuperUser.id) ApiErrorResponse apiErrorResponse = new() { Message = "Not Super User!" };
-            //Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
-            //response.Post(client.GetStream());
-
-            PackageRequest packageRequest = JsonConvert.DeserializeObject<PackageRequest>(data);
-            if(packageRequest.cards is not null && packageRequest.cards.Length == 5)
+            if (auth != "")
             {
-                bool temp = false;
-                ICard card;
-                List<ICard> tempCards = new();
-                foreach (var item in packageRequest.cards)
+                User user = dBConnector.getUserBySession(auth); // Admin 
+                if (user is not null && user.id == DBConnector.Admin.id)
                 {
-                    if (item.MonsterType == null)
-                        card = new Monster() { Damage = item.Damage, ElementType = item.ElementType, MonsterType = item.MonsterType, Name = item.Name };
-                    else
-                        card = new Spell() { Damage = item.Damage, ElementType = item.ElementType, Name = item.Name };
-                    card.id = Guid.NewGuid();
-                    if (dBConnector.InsertCard(card))
-                        temp = true;
-                    else
-                        tempCards.Add(card);
-                }
-                if (!temp)
-                {
-                    Package package = new() { id = Guid.NewGuid() };
-                    if (package.addCards(tempCards))
+                    PackageRequest packageRequest = JsonConvert.DeserializeObject<PackageRequest>(data);
+                    if (packageRequest.cards is not null && packageRequest.cards.Length == 5)
                     {
-                        if (dBConnector.InsertPackage(package))
+                        bool temp = false;
+                        ICard card;
+                        List<ICard> tempCards = new();
+                        foreach (var item in packageRequest.cards)
                         {
-                            Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(package)));
-                            response.Post(client.GetStream());
+                            if (item.MonsterType == null)
+                                card = new Monster() { Damage = item.Damage, ElementType = item.ElementType, MonsterType = item.MonsterType, Name = item.Name };
+                            else
+                                card = new Spell() { Damage = item.Damage, ElementType = item.ElementType, Name = item.Name };
+                            card.id = Guid.NewGuid();
+                            if (dBConnector.InsertCard(card))
+                                temp = true;
+                            else
+                                tempCards.Add(card);
+                        }
+                        if (!temp)
+                        {
+                            Package package = new() { id = Guid.NewGuid() };
+                            if (package.addCards(tempCards))
+                            {
+                                if (dBConnector.InsertPackage(package))
+                                {
+                                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(package)));
+                                    response.Post(client.GetStream());
+                                }
+                                else
+                                {
+                                    ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
+                                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                                    response.Post(client.GetStream());
+                                }
+
+                            }
+                            else
+                            {
+                                ApiErrorResponse apiErrorResponse = new() { Message = "MainLogic Error. Contact Admin!" };
+                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                                response.Post(client.GetStream());
+                            }
+
                         }
                         else
                         {
@@ -58,29 +75,27 @@ namespace ServerHTTP
                             Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
                             response.Post(client.GetStream());
                         }
-                        
                     }
                     else
                     {
-                        ApiErrorResponse apiErrorResponse = new() { Message = "MainLogic Error. Contact Admin!" };
+                        ApiErrorResponse apiErrorResponse = new() { Message = "Not enough Cards!" };
                         Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
                         response.Post(client.GetStream());
                     }
-                    
                 }
-                else{
-                    ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
+                else
+                {
+                    ApiErrorResponse apiErrorResponse = new() { Message = "User Not Found!" };
                     Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
                     response.Post(client.GetStream());
                 }
             }
             else
             {
-                ApiErrorResponse apiErrorResponse = new() { Message = "Not enough Cards!" };
+                ApiErrorResponse apiErrorResponse = new() { Message = "Not logged in!" };
                 Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
                 response.Post(client.GetStream());
             }
-
         }
     }
 }

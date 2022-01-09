@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Database;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Model;
 using Model.RequestModels;
 using Model.ResponseModels;
@@ -25,6 +27,19 @@ namespace ServerHTTP
             User user = new() { Username = userRequest.Username, Password = userRequest.Password };
             user.Session = Guid.NewGuid();
             user.id= Guid.NewGuid();
+            byte[] salt = new byte[128 / 8];
+            using (var rngCsp = new RNGCryptoServiceProvider())
+            {
+                rngCsp.GetNonZeroBytes(salt);
+            }
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            password: user.Password,
+            salt: salt,
+            prf: KeyDerivationPrf.HMACSHA256,
+            iterationCount: 100000,
+            numBytesRequested: 256 / 8));
+            user.Password = hashed; 
+            user.saltkey= BitConverter.ToString(salt);
             dBConnector.insertUser(user);
             AuthenticateResponse authenticateResponse = new() { Authorization = user.Session};
             Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));

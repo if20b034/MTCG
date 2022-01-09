@@ -5,8 +5,9 @@ using ServerHTTP;
 
 namespace Main
 {
-    class Program
+    public class Program
     {
+        
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
@@ -41,7 +42,7 @@ namespace Main
                     case "3":
                     case "connect":
                         dBConnector.CreateDB();
-                        dBConnector.CreateTable();
+                        dBConnector.CreateTables();
                         break;
 
                     case "4":

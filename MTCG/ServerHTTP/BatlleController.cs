@@ -78,7 +78,7 @@ namespace ServerHTTP
             if (auth != "")
             {
                 User user = dBConnector.getUserBySession(auth); // Admin 
-                if (user is not null)
+                if (user is not null&& user.id==DBConnector.Admin.id)
                 {
                     BattleAddRequest battleAddRequest = JsonConvert.DeserializeObject<BattleAddRequest>(data);
                     if(battleAddRequest is not null)
