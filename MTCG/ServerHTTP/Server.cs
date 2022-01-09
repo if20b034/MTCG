@@ -57,7 +57,7 @@ namespace ServerHTTP
             {
                 try
                 {
-                    var socket = listener.AcceptTcpClient(); //TODO: Create Task here
+                    var socket = listener.AcceptTcpClient();
                     NetworkStream stream = socket.GetStream();
                     string data=null;
                     Byte[] bytes = new Byte[1024];

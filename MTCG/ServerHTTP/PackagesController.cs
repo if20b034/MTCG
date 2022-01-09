@@ -14,7 +14,6 @@ namespace ServerHTTP
 {
     public class PackagesController
     {
-        //TODO: Check for Admin ID (Create Admin at Table Creation with set ID / Save Set ID for Admin checks)
         public static Action<string, TcpClient, string> CreatePackage = Create;
         private static DBConnector dBConnector = DBConnector.GetInstance();
 

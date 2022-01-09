@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Database;
 using Model;
 using ServerHTTP;
@@ -40,22 +41,12 @@ namespace Main
                         break;
 
                     case "3":
-                    case "connect":
+                    case "create":
                         dBConnector.CreateDB();
                         dBConnector.CreateTables();
                         break;
 
-                    case "4":
-                    case "disconnect":
-                        //User user = new User() { Username = "Tamara", Password = "1111" };
-                        //dBConnector.insertUser(user);
-                        //dBConnector.getAllUsers();
-                        ////dBConnector.getUser("Nuri");
-                        //user.Username = "Aramat";
-                        //dBConnector.UpdateUser(user);
-                        break;
-
-                    case "5":
+                    case "9":
                     case "quit": quit(); 
                         break;
 
@@ -75,15 +66,14 @@ namespace Main
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine("Server Starten (start) (1)");
             Console.WriteLine("Server beenden (close) (2)");
-            Console.WriteLine("Datenbank starten (connect) (3)");
-            Console.WriteLine("Datenbank trennen (disconnect) (4)");
-            Console.WriteLine("Quit (quit) (5)");
+            Console.WriteLine("Datenbank erstellen (create) (3)");
+            Console.WriteLine("Quit (quit) (9)");
             Console.WriteLine("----------------------------------------------");
         }
 
         private static void quit()
         {
-
+            System.Environment.Exit(0);
         }
     }
 }

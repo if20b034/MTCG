@@ -13,8 +13,6 @@ namespace ServerHTTP
         private static Dictionary<Key, dynamic> map = new();
         public static void chooseController(Request request, TcpClient ns)
         {
-            //TODO: try 
-            //TODO: Check for auth
             string[] tokens = request.URL.Split('/');
             if (tokens.Length == 2)
             {
@@ -28,15 +26,12 @@ namespace ServerHTTP
             else
                 if (tokens[1] == "transactions"|| tokens[1] == "battles")
                     if (map.TryGetValue(new Key() { Dimension1 = tokens[1] + "/" + tokens[2], Dimension2 = request.Type }, out var output))
-                        output(request.Data, ns, request.Authorization); //Eigentlich redundant weil es gibt nur einen transactions route ... egal dont care
+                        output(request.Data, ns, request.Authorization);
                     else
-                    { } //TODO Syntax shit
+                    { }
                 else
                     if (map.TryGetValue(new Key() { Dimension1 = tokens[1]+"/", Dimension2 = request.Type }, out var output))
                         output(request.Data, ns, request.Authorization, tokens[2]);
-            //TODO: IDIOT MACH DAS FERTIG!
-            //TODO: Kein Bock alter so viele Sicherrungen ? Glaubst du wirklich dass das überhaupt mehr als 2 Personen an Traffic haben wird? 
-            //TODO: Send Not found? 
         }
 
         public static void fillHandler()
@@ -60,7 +55,6 @@ namespace ServerHTTP
 
             map.Add(new Key() { Dimension1 = "battles", Dimension2 = "POST" }, BatlleController.BattleStart);
             map.Add(new Key() { Dimension1 = "battles/Add", Dimension2 = "POST" }, BatlleController.AddBattle);
-            //TODO REST
         }
     }
 }

@@ -12,7 +12,6 @@ namespace Model
         private const int StartingMoney = 20;
 
         private const int StartingElo = 100;
-        //TODO: Credentials
         public string Username { get; set; }
         public string Password { get; set;  }
 
@@ -32,7 +31,7 @@ namespace Model
             Collection = new();
             Deck = new();
             Coins = StartingMoney;
-            ELO = StartingElo; //TODO: Remove from contrs
+            ELO = StartingElo;
         }
 
         public bool buyPack(Package package)
@@ -42,7 +41,6 @@ namespace Model
             Coins = Coins - 5;
             return true;
         }
-        //TODO: add only if in Collection (Remove from colleciton) etc..
         public bool addCardToDeck(ICard card)
         {
             try

@@ -44,7 +44,6 @@ namespace ServerHTTP
             AuthenticateResponse authenticateResponse = new() { Authorization = user.Session};
             Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
             response.Post(client.GetStream());
-            //TODO: DUmmy check
         }
 
         private static void Get(string data, TcpClient client, string auth, string userid)
@@ -57,7 +56,7 @@ namespace ServerHTTP
                     User userId = dBConnector.getUserByID(userid);
                     if (userId is not null)
                     {
-                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userSession)));
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userId)));
                         response.Post(client.GetStream());
 
                     }
@@ -96,7 +95,20 @@ namespace ServerHTTP
 
                         RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
                         userSession.Username = userRequest.Username;
-                        userSession.Password = userRequest.Password; //TODO: Salt (Wie im Register und Login) 
+                        userSession.Password = userRequest.Password; 
+                        byte[] salt = new byte[128 / 8];
+                        using (var rngCsp = new RNGCryptoServiceProvider())
+                        {
+                            rngCsp.GetNonZeroBytes(salt);
+                        }
+                        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                        password: userSession.Password,
+                        salt: salt,
+                        prf: KeyDerivationPrf.HMACSHA256,
+                        iterationCount: 100000,
+                        numBytesRequested: 256 / 8));
+                        userSession.Password = hashed;
+                        userSession.saltkey = BitConverter.ToString(salt);
                         dBConnector.UpdateUser(userSession);
                         Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userSession)));
                         response.Post(client.GetStream());

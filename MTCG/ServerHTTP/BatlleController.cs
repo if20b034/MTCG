@@ -26,36 +26,62 @@ namespace ServerHTTP
                 User user = dBConnector.getUserBySession(auth);
                 if (user is not null)
                 {
-                    if(Battle.loadingUser is not null) //Spieler 2
+                    if (user.Deck.Count == 4) //NO Secureity for same player joining twice
                     {
-                        User user1 = Battle.loadingUser;
-                        Battle.loadingUser = user;
+                        if (Battle.loadingUser is not null) //Spieler 2
+                        {
+                            User user1 = Battle.loadingUser;
+                            Battle.loadingUser = user;
 
-                        BattleResult result = battle.Fight(user, user1);
-                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
-                        response.Post(client.GetStream());
+                            BattleResult result = battle.Fight(user, user1);
+                            if (result.winner)
+                            {
+                                user.ELO = user.ELO + 5;
+                            }
+                            else
+                            {
+                                user.ELO = user.ELO - 5;
+                            }
+                            if (dBConnector.UpdateUser(user))
+                            {
+                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
+                                response.Post(client.GetStream());
+                            }
+                            else
+                            {
+                                ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
+                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                                response.Post(client.GetStream());
+                            }
+                        }
+                        else //Spieler 1
+                        {
+                            Battle.loadingUser = user;
+                            while (Battle.loadingUser.id == user.id)
+                            {
+                                // Wait
+                            }
+                            User user2 = Battle.loadingUser;
+                            Battle.loadingUser = null;
+                            if (user2 is not null)
+                            {
+                                BattleResult result = battle.Fight(user, user2);
+                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
+                                response.Post(client.GetStream());
+                            }
+                            else
+                            {
+                                ApiErrorResponse apiErrorResponse = new() { Message = "User Error. Contact Admin!" };
+                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                                response.Post(client.GetStream());
+                            }
+                        }
                     }
-                    else //Spieler 1
+                    else
                     {
-                        Battle.loadingUser = user; 
-                        while(Battle.loadingUser.id== user.id)
-                        {
-                            // Wait
-                        }
-                        User user2 = Battle.loadingUser;
-                        Battle.loadingUser = null;
-                        if(user2 is not null)
-                        {
-                            BattleResult result = battle.Fight(user, user2);
-                            Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
-                            response.Post(client.GetStream());
-                        }
-                        else
-                        {
-                            ApiErrorResponse apiErrorResponse = new() { Message = "User Error. Contact Admin!" };
-                            Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
-                            response.Post(client.GetStream());
-                        }
+                        ApiErrorResponse apiErrorResponse = new() { Message = "Not a real Deck in use!" };
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                        response.Post(client.GetStream());
                     }
                 }
                 else
