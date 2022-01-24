@@ -26,7 +26,7 @@ namespace ServerHTTP
             {
                 string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                     password: user.Password,
-                    salt: Encoding.ASCII.GetBytes(findUser.saltkey),
+                    salt: findUser.saltkey,
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 100000,
                     numBytesRequested: 256 / 8));

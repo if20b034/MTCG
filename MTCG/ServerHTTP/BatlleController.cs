@@ -66,8 +66,25 @@ namespace ServerHTTP
                             if (user2 is not null)
                             {
                                 BattleResult result = battle.Fight(user, user2);
-                                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
-                                response.Post(client.GetStream());
+                                if (result.winner)
+                                {
+                                    user.ELO = user.ELO + 5;
+                                }
+                                else
+                                {
+                                    user.ELO = user.ELO - 5;
+                                }
+                                if (dBConnector.UpdateUser(user))
+                                {
+                                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(result)));
+                                    response.Post(client.GetStream());
+                                }
+                                else
+                                {
+                                    ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
+                                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                                    response.Post(client.GetStream());
+                                }
                             }
                             else
                             {

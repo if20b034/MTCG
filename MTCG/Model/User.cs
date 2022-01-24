@@ -21,7 +21,7 @@ namespace Model
 
         public int ELO { get; set; }
 
-        public string saltkey { get; set; }
+        public byte[] saltkey { get; set; }
 
         public List<ICard> Collection { get; set; }
         public List<ICard> Deck { get; set; }

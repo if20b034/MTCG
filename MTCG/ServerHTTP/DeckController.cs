@@ -38,20 +38,22 @@ namespace ServerHTTP
                             else
                                 tempbool = true; 
                         }
-                        if(!tempbool)
+                        if (!tempbool){
+                            user.Deck = cards;
                             if (dBConnector.UpdateUser(user))
                             {
-                                DeckResponse authenticateResponse = new() { cardIds = cards.Select(x=>x.id).ToList() };
+                                DeckResponse authenticateResponse = new() { cardIds = cards.Select(x => x.id).ToList() };
                                 Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
                                 response.Post(client.GetStream());
-                            
+
                             }
                             else
                             {
                                 ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
                                 Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
                                 response.Post(client.GetStream());
-                            }
+                            } 
+                        }
                         else
                         {
                             ApiErrorResponse apiErrorResponse = new() { Message = "You do not own All of these Cards!" };
@@ -86,7 +88,7 @@ namespace ServerHTTP
             if (auth != "")
             {
                 User user = dBConnector.getUserBySession(auth);
-                if (user is not null)
+                if (user.id!=Guid.Empty)
                 {
                     DeckResponse deckResponse = new() { cardIds =  user.Deck.Select(x=>x.id).ToList()};
                     Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(deckResponse)));

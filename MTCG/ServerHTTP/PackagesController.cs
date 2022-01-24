@@ -32,12 +32,12 @@ namespace ServerHTTP
                         List<ICard> tempCards = new();
                         foreach (var item in packageRequest.cards)
                         {
-                            if (item.MonsterType == null)
+                            if (item.MonsterType != null)
                                 card = new Monster() { Damage = item.Damage, ElementType = item.ElementType, MonsterType = item.MonsterType, Name = item.Name };
                             else
                                 card = new Spell() { Damage = item.Damage, ElementType = item.ElementType, Name = item.Name };
                             card.id = Guid.NewGuid();
-                            if (dBConnector.InsertCard(card))
+                            if (!dBConnector.InsertCard(card))
                                 temp = true;
                             else
                                 tempCards.Add(card);

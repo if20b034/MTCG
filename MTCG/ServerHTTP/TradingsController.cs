@@ -158,7 +158,7 @@ namespace ServerHTTP
                     {
                         if(dBConnector.GetCardsfromUser(userSession.id).All(x=>x.id!=trade.id))
                         {
-                            ICard card = dBConnector.GetCardsfromID(Guid.Parse(data));
+                            ICard card = dBConnector.GetCardsfromID(Guid.Parse(data)); //card = card from User 
                             if (trade.TradingCard.CardType == typeof(Monster).ToString().ToLower() && card.GetType() == typeof(Monster))
                             {
                                 if (trade.TradingCard.ElementType == card.ElementType && trade.TradingCard.MinimumDamage <= card.Damage)

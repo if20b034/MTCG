@@ -24,7 +24,7 @@ namespace ServerHTTP
                 User user = dBConnector.getUserBySession(auth);
                 if (user is not null)
                 {
-                    Package package = dBConnector.GetAllPackages().First();
+                    Package package = dBConnector.GetAllPackages().First(); //Wenn es kein Package gibt schmirt es mir das Programm ab... 
                     if (user.buyPack(package))
                     {
                         if (dBConnector.DeletePackage(package.id))

@@ -24,26 +24,55 @@ namespace ServerHTTP
         private static void Register(string data, TcpClient client, string auth)
         {
             RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
-            User user = new() { Username = userRequest.Username, Password = userRequest.Password };
-            user.Session = Guid.NewGuid();
-            user.id= Guid.NewGuid();
-            byte[] salt = new byte[128 / 8];
-            using (var rngCsp = new RNGCryptoServiceProvider())
+            if(userRequest is not null)
             {
-                rngCsp.GetNonZeroBytes(salt);
+                if (dBConnector.getUser(userRequest.Username).Username != userRequest.Username)
+                {
+                    User user = new() { Username = userRequest.Username, Password = userRequest.Password };
+                    user.Session = Guid.NewGuid();
+                    user.id = Guid.NewGuid();
+                    byte[] salt = new byte[128 / 8];
+                    using (var rngCsp = new RNGCryptoServiceProvider())
+                    {
+                        rngCsp.GetNonZeroBytes(salt);
+                    }
+                    string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: user.Password,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 100000,
+                    numBytesRequested: 256 / 8));
+                    user.Password = hashed;
+                    user.saltkey = salt;
+
+                    if (dBConnector.insertUser(user))
+                    {
+
+                        AuthenticateResponse authenticateResponse = new() { Authorization = user.Session };
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
+                        response.Post(client.GetStream());
+                    }
+                    else
+                    {
+                        ApiErrorResponse apiErrorResponse = new() { Message = "Database Error. Contact Admin!" };
+                        Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                        response.Post(client.GetStream());
+                    }
+                }
+                else
+                {
+                    ApiErrorResponse apiErrorResponse = new() { Message = "Error Creating Account!" }; //User exestiert bereits
+                    Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                    response.Post(client.GetStream());
+                }
             }
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-            password: user.Password,
-            salt: salt,
-            prf: KeyDerivationPrf.HMACSHA256,
-            iterationCount: 100000,
-            numBytesRequested: 256 / 8));
-            user.Password = hashed; 
-            user.saltkey= BitConverter.ToString(salt);
-            dBConnector.insertUser(user);
-            AuthenticateResponse authenticateResponse = new() { Authorization = user.Session};
-            Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(authenticateResponse)));
-            response.Post(client.GetStream());
+            else
+            {
+                ApiErrorResponse apiErrorResponse = new() { Message = "No Credentials!" };
+                Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(apiErrorResponse)));
+                response.Post(client.GetStream());
+            }
+           
         }
 
         private static void Get(string data, TcpClient client, string auth, string userid)
@@ -53,8 +82,8 @@ namespace ServerHTTP
                 User userSession = dBConnector.getUserBySession(auth);
                 if (userSession is not null)
                 {
-                    User userId = dBConnector.getUserByID(userid);
-                    if (userId is not null)
+                    User userId = dBConnector.getUserByID(Guid.Parse(userid));
+                    if (userId is not null && userId.id== userSession.id)
                     {
                         Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userId)));
                         response.Post(client.GetStream());
@@ -89,8 +118,8 @@ namespace ServerHTTP
                 User userSession = dBConnector.getUserBySession(auth);
                 if (userSession is not null)
                 {
-                    User userId = dBConnector.getUserByID(userid);
-                    if (userId is not null)
+                    User userId = dBConnector.getUserByID(Guid.Parse(userid));
+                    if (userId is not null && userId.id == userSession.id)
                     {
 
                         RegisterRequest userRequest = JsonConvert.DeserializeObject<RegisterRequest>(data);
@@ -108,7 +137,7 @@ namespace ServerHTTP
                         iterationCount: 100000,
                         numBytesRequested: 256 / 8));
                         userSession.Password = hashed;
-                        userSession.saltkey = BitConverter.ToString(salt);
+                        userSession.saltkey =salt;
                         dBConnector.UpdateUser(userSession);
                         Response response = Response.From("200 OK", Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(userSession)));
                         response.Post(client.GetStream());

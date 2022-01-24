@@ -7,6 +7,7 @@ namespace MTCG.Test
 {
     public class Tests
     {
+        Battle BL = Battle.GetInstance();
         [SetUp]
         public void Setup()
         {
@@ -15,7 +16,7 @@ namespace MTCG.Test
         [Test]
         public void BattleTest1()
         {
-            Battle BL = Battle.GetInstance();
+           
             User u1 = new();
             User u2 = new();
             
